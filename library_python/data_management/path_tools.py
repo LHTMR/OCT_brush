@@ -23,6 +23,8 @@ def define_OCT_database_path(data_external_hdd=False):
         # Assume ThinLinc Client on Linux (Anders Fridberger server)
         computer_id = os.getenv("ARCH", "")
 
+    computer_id = computer_id.split(".")[0].lower()  # Normalize to lowercase and remove domain if present      
+
     # Define paths based on computer ID and external HDD flag
     if computer_id == 'BASIL':
         # Personal computer
@@ -61,11 +63,11 @@ def define_OCT_database_path(data_external_hdd=False):
             database_abs_path = "/data/home/basil/thindrives/OCT_VIB/"
         else:
             database_abs_path = "/data/home/basil/thindrives/data/"
-    elif computer_id == 'lnx00335.ad.liu.se':
+    elif computer_id == 'lnx00400':
         if data_external_hdd:
             raise ValueError(f"Workstation: {computer_id}. Asking for a external HDD (=true) but not sure how it can be possible.")
         else:
-            database_abs_path = "/home/basdu83/data/octvib/"
+            database_abs_path = "/coop/l/lhtmr_oct/OCT_database"
     else:
         raise ValueError(f"Unknown workstation: {computer_id}")
 
@@ -128,20 +130,23 @@ def get_folders_with_file(folder, target_file, search_by_substring=False, automa
     
     # no folder has been found fullfilling the target_file requirement
     if foldernames_abs:
-        # Make sure that they use the same standard path/directory system
-        if "/" in session_abs:
-            session_abs = session_abs.replace("/", "\\")
-        if "/" in foldernames_abs[0]:
-            foldernames_abs = [name_abs.replace("/", "\\") for name_abs in foldernames_abs]
-        if verbose:
-            print("------------------")
-            print("Input acquisitions of interest (absolute):")
-            print(foldernames_abs)
-            print("Acquisitions of interest:")
-            print(foldernames)
-            print(f"Total number of acquisitions: {len(foldernames)}")
-            print(f"Path initialized:\nsession_abs = '{session_abs}'")
-            print("------------------")
+        if platform.system() == "Windows":            # Make sure that they use the same standard path/directory system
+            if "/" in session_abs:
+                session_abs = session_abs.replace("/", "\\")
+            if "/" in foldernames_abs[0]:
+                foldernames_abs = [name_abs.replace("/", "\\") for name_abs in foldernames_abs]
+            if verbose:
+                print("------------------")
+                print("Input acquisitions of interest (absolute):")
+                print(foldernames_abs)
+                print("Acquisitions of interest:")
+                print(foldernames)
+                print(f"Total number of acquisitions: {len(foldernames)}")
+                print(f"Path initialized:\nsession_abs = '{session_abs}'")
+                print("------------------")
+        else:
+            session_abs = Path(session_abs).as_posix()  # Ensure session_abs is a POSIX path
+            foldernames_abs = [Path(p).as_posix() for p in foldernames_abs]
     else:
         warnings.warn(f"No subfolders of interest found for the target file {target_file} in:\n{folder}.")
         foldernames = None
