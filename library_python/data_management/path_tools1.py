@@ -61,11 +61,11 @@ def define_OCT_database_path(data_external_hdd=False):
             database_abs_path = "/data/home/basil/thindrives/OCT_VIB/"
         else:
             database_abs_path = "/data/home/basil/thindrives/data/"
-    elif computer_id == 'lnx00335.ad.liu.se':
+    elif computer_id in {'lnx00400', 'lnx00400.ad.liu.se'}:
         if data_external_hdd:
             raise ValueError(f"Workstation: {computer_id}. Asking for a external HDD (=true) but not sure how it can be possible.")
         else:
-            database_abs_path = "/home/basdu83/data/octvib/"
+            database_abs_path = "/coop/l/lhtmr_oct/OCT_database"
     else:
         raise ValueError(f"Unknown workstation: {computer_id}")
 
@@ -266,8 +266,8 @@ def get_leaf_folders(folder, verbose=False):
             print("+++++++++++")
     else:
         for subfolder in folder_content:
-            if f"intercal{target_interval}" in subfolder.name:
-                leaf_folders.extend(get_leaf_folders(subfolder, verbose))
+            # if f"intercal{target_interval}" in subfolder.name:
+            leaf_folders.extend(get_leaf_folders(subfolder, verbose))
     
     # Convert each Path object to string
     leaf_folders = [str(p) for p in leaf_folders]
