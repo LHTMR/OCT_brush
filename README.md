@@ -6,7 +6,7 @@ It includes scripts to process structural scans, vibration videos, morph data, p
 ---
 
 ## Folder Structure
-OCT_brush/
+```OCT_brush/
 ├─ 1_process/
 │ └─ OCT/
 │ ├─ 1_0_0_process_oct_structural_images.py
@@ -18,7 +18,7 @@ OCT_brush/
 │ ├─ 1_3_1_process_oct_morph-n-phase-change_show.py
 │ └─ 1_4_0_process_oct_skin-surface_tracking.py
 └─ library_python/ (utility modules used across scripts)
-
+```
 
 
 ---
