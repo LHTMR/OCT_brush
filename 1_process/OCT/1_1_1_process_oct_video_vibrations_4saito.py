@@ -9,7 +9,7 @@ import cv2
 
 # Add the path to the library_python module
 sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
-import library_python.data_management.path_tools1 as path_tools  # noqa: E402
+import library_python.data_management.path_tools as path_tools  # noqa: E402
 from library_python.sensors.OCT.OCTRecordingManager1 import OCTRecordingManager  # noqa: E402
 from library_python.sensors.OCT.OCTMorph import OCTMorph  # noqa: E402
 from library_python.signal_processing.InteractiveVectorEditor import InteractiveVectorEditor  # noqa: E402
@@ -26,7 +26,7 @@ if __name__ == "__main__":
     # 0. Initialization of parameters
     data_external_hdd = False
     set_path_automatic = False
-    dataset = "OCT_BRUSH"  # OCT_VIB_NEUR, OCT_HAIR-DEFLECTION
+    dataset = "OCT_BRU_NEUR"  # OCT_VIB_NEUR, OCT_HAIR-DEFLECTION, OCT_BRU_NEUR
     datatype = "OCT_HAIR-DEFLECTION"  # OCT_VIB_NEUR, OCT_HAIR-DEFLECTION
 
     force_processing = True
