@@ -111,7 +111,7 @@ if __name__ == "__main__":
                     # Create the directory if it doesn't exist
                     if not os.path.exists(os.path.dirname(output_img_abs)):
                         os.makedirs(os.path.dirname(output_img_abs))
-                    fig.savefig(output_img_abs, dpi=30, bbox_inches='tight')  # Use dpi=300 for high-quality images
+                    fig.savefig(output_img_abs, dpi=300, bbox_inches='tight')  # Use dpi=300 for high-quality images
                 if show:
                     plt.show(block=True)
 
