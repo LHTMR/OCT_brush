@@ -99,8 +99,44 @@ if __name__ == "__main__":
             # Create a binary image and convert boolean to integer (0 or 1)
             d = (d > np.mean(d)).astype(np.uint8)
 
-            # Extract the location of the first value equal to 1 of each column
-            expected_skin_locations = np.argmax(d == 1, axis=0) + depth_offset
+
+            # --- Added from Code 2: Morphological closing ---
+            kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+            d_morph = cv2.morphologyEx(d, cv2.MORPH_CLOSE, kernel, iterations=1)
+
+            # --- Added from Code 2: Connected component labeling ---
+            num_labels, labels, stats, centroids = cv2.connectedComponentsWithStats(
+                d_morph, connectivity=8
+            )
+
+            # Keep only large components (remove tiny noise)
+            if num_labels > 1:
+                areas = stats[1:, cv2.CC_STAT_AREA]
+                max_area = np.max(areas) if areas.size > 0 else 0
+                area_threshold = max_area * 0.01  # remove very small components
+
+                d_filtered = np.zeros_like(d_morph)
+                for i in range(1, num_labels):
+                    if stats[i, cv2.CC_STAT_AREA] >= area_threshold:
+                        d_filtered[labels == i] = 1
+            else:
+                d_filtered = d_morph
+                            
+            # --- Replace code1 surface detection with code2 version ---
+            expected_skin_locations = np.zeros(d_filtered.shape[1], dtype=int)
+            for col in range(d_filtered.shape[1]):
+                nonzero_indices = np.nonzero(d_filtered[:, col])[0]
+                if len(nonzero_indices) > 0:
+                    expected_skin_locations[col] = nonzero_indices[0] + depth_offset
+                else:
+                    if col > 0:
+                        expected_skin_locations[col] = expected_skin_locations[col - 1]
+                    else:
+                        expected_skin_locations[col] = depth_offset
+                        
+            # # Extract the location of the first value equal to 1 of each column
+            # expected_skin_locations = np.argmax(d == 1, axis=0) + depth_offset
+
             
             # Use the directory name as the column name
             column_name = f"aline_id{a}"
@@ -127,7 +163,7 @@ if __name__ == "__main__":
                     # Create the directory if it doesn't exist
                     if not os.path.exists(os.path.dirname(output_img_abs)):
                         os.makedirs(os.path.dirname(output_img_abs))
-                    fig.savefig(output_img_abs, dpi=50, bbox_inches='tight')  # Use dpi=300 for high-quality images
+                    # fig.savefig(output_img_abs, dpi=300, bbox_inches='tight')  # Use dpi=300 for high-quality images
                 if show:
                     plt.show(block=True)
 
